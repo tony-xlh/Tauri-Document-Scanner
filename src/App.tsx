@@ -74,6 +74,14 @@ function App() {
     setSelectedScanner(value);
   }
 
+  const showImageEditor = () => {
+    const DWObject = dwt.current;
+    if (DWObject) {
+      let imageEditor = DWObject.Viewer.createImageEditor();
+      imageEditor.show();
+    }
+  }
+
   return (
     <Layout hasSider>
       <Layout style={{ marginRight: 300 }}>
@@ -138,10 +146,11 @@ function App() {
           <Panel header="VIEWER" key="2">
             Viewer Mode:
             <div>
-              <InputNumber min={1} max={5} value={viewMode.cols} onChange={(value)=>{setViewMode({cols:value,rows:viewMode.rows})}} />
+              <InputNumber min={-1} max={5} value={viewMode.cols} onChange={(value)=>{setViewMode({cols:value,rows:viewMode.rows})}} />
               x
-              <InputNumber min={1} max={5} value={viewMode.rows} onChange={(value)=>{setViewMode({cols:viewMode.cols,rows:value})}} />
+              <InputNumber min={-1} max={5} value={viewMode.rows} onChange={(value)=>{setViewMode({cols:viewMode.cols,rows:value})}} />
             </div>
+            <Button onClick={showImageEditor}>Show Image Editor</Button>  
           </Panel>
           <Panel header="SAVE" key="3">
           <Button onClick={save}>Save as PDF</Button>
