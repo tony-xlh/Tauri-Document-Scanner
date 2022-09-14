@@ -1,21 +1,35 @@
 import {useEffect, useRef } from "react";
 import Dynamsoft from "dwt";
+import { WebTwain } from "dwt/dist/types/WebTwain";
 
-function DocumentViewer() {
+interface props {
+  license?:string;
+  onWebTWAINReady?: (dwt:WebTwain) => void;
+  width?: string;
+  height?: string;
+}
+
+const DocumentViewer: React.FC<props> = (props: props)  => {
   const containerID = "dwtcontrolContainer";
   const container = useRef<HTMLDivElement>(null);
   useEffect(()=>{
-    console.log("load page");
     Dynamsoft.DWT.RegisterEvent('OnWebTwainReady', () => {
       const DWObject = Dynamsoft.DWT.GetWebTwain(containerID);
-      console.log(DWObject);
-      if (container.current) {
-        container.current.style.height = "100%";
-        container.current.style.width = "100%";
+      if (props.width) {
+        if (container.current) {
+          container.current.style.width = props.width;
+        }
+        DWObject.Viewer.width = props.width;
       }
-      
-      DWObject.Viewer.height = "100%";
-      DWObject.Viewer.width = "100%";
+      if (props.height) {
+        if (container.current) {
+          container.current.style.height = props.height;
+        }
+        DWObject.Viewer.height = props.height;
+      }
+      if (props.onWebTWAINReady) {
+        props.onWebTWAINReady(DWObject);
+      }
     });
     Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
     Dynamsoft.DWT.Containers = [{
