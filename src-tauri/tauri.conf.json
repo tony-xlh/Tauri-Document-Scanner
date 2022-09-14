@@ -11,9 +11,6 @@
   },
   "tauri": {
     "allowlist": {
-      "notification": {
-        "all": true 
-      },
       "all": true
     },
     "bundle": {

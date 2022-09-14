@@ -5,7 +5,7 @@ import { WebTwain } from "dwt/dist/types/WebTwain";
 import { Select, Button, Layout, Collapse, Checkbox, Radio, RadioChangeEvent, InputNumber  } from 'antd';
 import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
-
+import { register } from '@tauri-apps/api/globalShortcut';
 
 const { Panel } = Collapse;
 const { Content, Sider } = Layout;
@@ -24,8 +24,14 @@ function App() {
   React.useEffect(()=>{
     console.log("load page");
     askForPermission();
+    registerShortCuts();
   },[]);
 
+  const registerShortCuts = async () => {
+    await register('CommandOrControl+Shift+C', () => {
+      scan();
+    });
+  }
   const askForPermission = async () => {
     const permissionGranted = await isPermissionGranted();
     console.log(permissionGranted);
