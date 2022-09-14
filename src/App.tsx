@@ -49,7 +49,7 @@ function App() {
     if (DWObject) {
       let deviceConfiguration:DeviceConfiguration = {};
       deviceConfiguration.IfShowUI = showUI;
-      deviceConfiguration.IfDuplexEnabled = ADF;
+      deviceConfiguration.IfFeederEnabled = ADF;
       deviceConfiguration.SelectSourceByIndex = scanners.indexOf(selectedScanner);
       deviceConfiguration.PixelType = selectedPixelType;
       deviceConfiguration.Resolution = selectedResolution;
