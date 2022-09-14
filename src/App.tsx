@@ -3,6 +3,7 @@ import React from "react";
 import DocumentViewer from "./components/DWT";
 import { WebTwain } from "dwt/dist/types/WebTwain";
 import { Select, Button, Layout, Collapse  } from 'antd';
+import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
 
 const { Panel } = Collapse;
 const { Content, Sider } = Layout;
@@ -19,7 +20,10 @@ function App() {
   const scan = () => {
     const DWObject = dwt.current;
     if (DWObject) {
-      DWObject.AcquireImage();
+      let deviceConfiguration:DeviceConfiguration = {};
+      deviceConfiguration.IfShowUI = false;
+      deviceConfiguration.SelectSourceByIndex = scanners.indexOf(selectedScanner);
+      DWObject.AcquireImage(deviceConfiguration);
     }
   }
 
