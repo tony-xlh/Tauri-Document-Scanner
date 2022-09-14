@@ -2,8 +2,9 @@ import "./App.css";
 import React from "react";
 import DocumentViewer from "./components/DWT";
 import { WebTwain } from "dwt/dist/types/WebTwain";
-import { Select, Button, Layout, Collapse, Checkbox  } from 'antd';
+import { Select, Button, Layout, Collapse, Checkbox, Radio, RadioChangeEvent  } from 'antd';
 import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
+import { DynamsoftEnumsDWT } from "dwt/dist/types/Dynamsoft.Enum";
 
 const { Panel } = Collapse;
 const { Content, Sider } = Layout;
@@ -15,6 +16,8 @@ function App() {
   const [showUI,setShowUI] = React.useState(false);
   const dwt = React.useRef<WebTwain>();
   const [selectedScanner,setSelectedScanner] = React.useState("");
+  const [selectedPixelType, setSelectedPixelType] = React.useState(0);
+  const [selectedResolution, setSelectedResolution] = React.useState(100);
   React.useEffect(()=>{
     console.log("load page");
   },[]);
@@ -26,6 +29,9 @@ function App() {
       deviceConfiguration.IfShowUI = showUI;
       deviceConfiguration.IfDuplexEnabled = ADF;
       deviceConfiguration.SelectSourceByIndex = scanners.indexOf(selectedScanner);
+      deviceConfiguration.PixelType = selectedPixelType;
+      deviceConfiguration.Resolution = selectedResolution;
+      console.log(deviceConfiguration);
       DWObject.AcquireImage(deviceConfiguration);
     }
   }
@@ -95,7 +101,23 @@ function App() {
               <Checkbox value={ADF} onChange={()=>{setADF(!ADF)}}>ADF</Checkbox>
               <Checkbox value={showUI} onChange={()=>{setShowUI(!showUI)}}>Show UI</Checkbox>
             </div>
-
+            <div>
+              Pixel Type:
+              <Radio.Group onChange={(e:RadioChangeEvent)=>{setSelectedPixelType(e.target.value)}} value={selectedPixelType}>
+                <Radio value={0}>B&W</Radio>
+                <Radio value={1}>Gray</Radio>
+                <Radio value={2}>Color</Radio>
+              </Radio.Group>
+              Resolution:
+              <Select 
+                style={{width:"100%"}}
+                onChange={(value)=>{setSelectedResolution(value)}}
+                value={selectedResolution}>
+                  <Option value="100">100</Option>
+                  <Option value="200">200</Option>
+                  <Option value="300">300</Option>
+              </Select>
+            </div>
             <Button onClick={scan}>Scan</Button>
           </Panel>
           <Panel header="VIEWER" key="2">
