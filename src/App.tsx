@@ -2,7 +2,7 @@ import "./App.css";
 import React from "react";
 import DocumentViewer from "./components/DWT";
 import { WebTwain } from "dwt/dist/types/WebTwain";
-import { Select, Button, Layout, Collapse  } from 'antd';
+import { Select, Button, Layout, Collapse, Checkbox  } from 'antd';
 import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
 
 const { Panel } = Collapse;
@@ -11,6 +11,8 @@ const { Option } = Select;
 
 function App() {
   const [scanners,setScanners] = React.useState([] as string[]);
+  const [ADF,setADF] = React.useState(false);
+  const [showUI,setShowUI] = React.useState(false);
   const dwt = React.useRef<WebTwain>();
   const [selectedScanner,setSelectedScanner] = React.useState("");
   React.useEffect(()=>{
@@ -21,7 +23,8 @@ function App() {
     const DWObject = dwt.current;
     if (DWObject) {
       let deviceConfiguration:DeviceConfiguration = {};
-      deviceConfiguration.IfShowUI = false;
+      deviceConfiguration.IfShowUI = showUI;
+      deviceConfiguration.IfDuplexEnabled = ADF;
       deviceConfiguration.SelectSourceByIndex = scanners.indexOf(selectedScanner);
       DWObject.AcquireImage(deviceConfiguration);
     }
@@ -76,6 +79,7 @@ function App() {
       >
         <Collapse className="controls" defaultActiveKey={['1']} onChange={onChange}>
           <Panel header="SCAN" key="1">
+            Select Scanner:
             <Select 
               onChange={onSelectedScannerChange}
               value={selectedScanner}
@@ -87,6 +91,11 @@ function App() {
                 >{scanner}</Option>
               )}
             </Select>
+            <div>
+              <Checkbox value={ADF} onChange={()=>{setADF(!ADF)}}>ADF</Checkbox>
+              <Checkbox value={showUI} onChange={()=>{setShowUI(!showUI)}}>Show UI</Checkbox>
+            </div>
+
             <Button onClick={scan}>Scan</Button>
           </Panel>
           <Panel header="VIEWER" key="2">
