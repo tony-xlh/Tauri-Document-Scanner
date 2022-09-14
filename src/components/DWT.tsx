@@ -7,6 +7,7 @@ interface props {
   onWebTWAINReady?: (dwt:WebTwain) => void;
   width?: string;
   height?: string;
+  viewMode?: {cols:number,rows:number};
 }
 
 const DocumentViewer: React.FC<props> = (props: props)  => {
@@ -30,6 +31,9 @@ const DocumentViewer: React.FC<props> = (props: props)  => {
       if (props.onWebTWAINReady) {
         props.onWebTWAINReady(DWObject);
       }
+      if (props.viewMode) {
+        DWObject.Viewer.setViewMode(props.viewMode.cols,props.viewMode.rows);
+      }
     });
     Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
     Dynamsoft.DWT.Containers = [{
@@ -38,6 +42,13 @@ const DocumentViewer: React.FC<props> = (props: props)  => {
     }];
     Dynamsoft.DWT.Load();
   },[]);
+
+  useEffect(()=>{
+    const DWObject = Dynamsoft.DWT.GetWebTwain(containerID);
+    if (DWObject && props.viewMode) {
+      DWObject.Viewer.setViewMode(props.viewMode.cols,props.viewMode.rows);
+    }
+  },[props.viewMode]);
 
   return (
     <div ref={container} id={containerID}></div>

@@ -2,7 +2,7 @@ import "./App.css";
 import React from "react";
 import DocumentViewer from "./components/DWT";
 import { WebTwain } from "dwt/dist/types/WebTwain";
-import { Select, Button, Layout, Collapse, Checkbox, Radio, RadioChangeEvent  } from 'antd';
+import { Select, Button, Layout, Collapse, Checkbox, Radio, RadioChangeEvent, InputNumber  } from 'antd';
 import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
 import { DynamsoftEnumsDWT } from "dwt/dist/types/Dynamsoft.Enum";
 
@@ -15,6 +15,7 @@ function App() {
   const [ADF,setADF] = React.useState(false);
   const [showUI,setShowUI] = React.useState(false);
   const dwt = React.useRef<WebTwain>();
+  const [viewMode, setViewMode] = React.useState({cols:2,rows:2});
   const [selectedScanner,setSelectedScanner] = React.useState("");
   const [selectedPixelType, setSelectedPixelType] = React.useState(0);
   const [selectedResolution, setSelectedResolution] = React.useState(100);
@@ -33,6 +34,19 @@ function App() {
       deviceConfiguration.Resolution = selectedResolution;
       console.log(deviceConfiguration);
       DWObject.AcquireImage(deviceConfiguration);
+    }
+  }
+
+  const save = () => {
+    const DWObject = dwt.current;
+    if (DWObject) {
+      const onSuccess = () => {
+        alert("Success");
+      }
+      const onFailure = () => {
+        alert("Failed");
+      }
+      DWObject.SaveAllAsPDF("Documents.pdf",onSuccess,onFailure);
     }
   }
 
@@ -68,6 +82,7 @@ function App() {
               width="100%"
               height="100%"
               onWebTWAINReady={onWebTWAINReady}
+              viewMode={viewMode}
             ></DocumentViewer>
         </Content>
       </Layout>
@@ -98,8 +113,8 @@ function App() {
               )}
             </Select>
             <div>
-              <Checkbox value={ADF} onChange={()=>{setADF(!ADF)}}>ADF</Checkbox>
-              <Checkbox value={showUI} onChange={()=>{setShowUI(!showUI)}}>Show UI</Checkbox>
+              <Checkbox checked={ADF} onChange={()=>{setADF(!ADF)}}>ADF</Checkbox>
+              <Checkbox checked={showUI} onChange={()=>{setShowUI(!showUI)}}>Show UI</Checkbox>
             </div>
             <div>
               Pixel Type:
@@ -121,10 +136,15 @@ function App() {
             <Button onClick={scan}>Scan</Button>
           </Panel>
           <Panel header="VIEWER" key="2">
-            <p>text</p>
+            Viewer Mode:
+            <div>
+              <InputNumber min={1} max={5} value={viewMode.cols} onChange={(value)=>{setViewMode({cols:value,rows:viewMode.rows})}} />
+              x
+              <InputNumber min={1} max={5} value={viewMode.rows} onChange={(value)=>{setViewMode({cols:viewMode.cols,rows:value})}} />
+            </div>
           </Panel>
           <Panel header="SAVE" key="3">
-            <p>text</p>
+          <Button onClick={save}>Save as PDF</Button>
           </Panel>
         </Collapse>
       </Sider>
