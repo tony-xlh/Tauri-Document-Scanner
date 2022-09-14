@@ -4,13 +4,15 @@ import DocumentViewer from "./components/DWT";
 import { WebTwain } from "dwt/dist/types/WebTwain";
 import { Select, Button, Layout, Collapse, Checkbox, Radio, RadioChangeEvent, InputNumber  } from 'antd';
 import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
-import { DynamsoftEnumsDWT } from "dwt/dist/types/Dynamsoft.Enum";
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
+
 
 const { Panel } = Collapse;
 const { Content, Sider } = Layout;
 const { Option } = Select;
 
 function App() {
+  const hasPermission  = React.useRef('denied');
   const [scanners,setScanners] = React.useState([] as string[]);
   const [ADF,setADF] = React.useState(false);
   const [showUI,setShowUI] = React.useState(false);
@@ -21,7 +23,20 @@ function App() {
   const [selectedResolution, setSelectedResolution] = React.useState(100);
   React.useEffect(()=>{
     console.log("load page");
+    askForPermission();
   },[]);
+
+  const askForPermission = async () => {
+    const permissionGranted = await isPermissionGranted();
+    console.log(permissionGranted);
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      console.log(permission);
+      hasPermission.current = permission;
+    }else{
+      hasPermission.current = "granted";
+    }
+  }
 
   const scan = () => {
     const DWObject = dwt.current;
@@ -41,10 +56,14 @@ function App() {
     const DWObject = dwt.current;
     if (DWObject) {
       const onSuccess = () => {
-        alert("Success");
+        if (hasPermission.current == "granted") {
+          sendNotification({ title: 'Document Scanner', body: 'Succeeded' });
+        }
       }
       const onFailure = () => {
-        alert("Failed");
+        if (hasPermission.current == "granted") {
+          sendNotification({ title: 'Document Scanner', body: 'Failed' });
+        }
       }
       DWObject.SaveAllAsPDF("Documents.pdf",onSuccess,onFailure);
     }
