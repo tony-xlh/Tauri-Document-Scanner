@@ -6,7 +6,9 @@ import { Select, Button, Layout, Collapse, Checkbox, Radio, RadioChangeEvent, In
 import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
 import { register } from '@tauri-apps/api/globalShortcut';
-
+import { resourceDir, join } from '@tauri-apps/api/path';
+import { open } from '@tauri-apps/api/shell';
+import { message } from '@tauri-apps/api/dialog';
 
 const { Panel } = Collapse;
 const { Content, Sider } = Layout;
@@ -87,6 +89,10 @@ function App() {
 
   const onWebTWAINNotFound = async () => {
     console.log("not found");
+    await message('Dynamsoft Service has not been installed. Please install it and then restart the program.', { title: 'Document Scanner', type: 'warning' });
+    const resourceDirPath = await resourceDir();
+    const distPath = await join(resourceDirPath, 'dist');
+    await open(distPath);
   }
 
   const loadScannersList = () => {
