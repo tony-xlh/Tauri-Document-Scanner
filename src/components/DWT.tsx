@@ -48,7 +48,9 @@ const DocumentViewer: React.FC<props> = (props: props)  => {
       DynamsoftAny.OnWebTwainNotFoundOnMacCallback = notfound;
       DynamsoftAny.OnWebTwainNotFoundOnLinuxCallback = notfound;
     }
-    
+    if (props.license) {
+      Dynamsoft.DWT.ProductKey = props.license;
+    }
     Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
     Dynamsoft.DWT.Containers = [{
         WebTwainId: 'dwtObject',
