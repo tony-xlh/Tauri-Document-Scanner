@@ -7,6 +7,7 @@ import { DeviceConfiguration } from "dwt/dist/types/WebTwain.Acquire";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
 import { register } from '@tauri-apps/api/globalShortcut';
 
+
 const { Panel } = Collapse;
 const { Content, Sider } = Layout;
 const { Option } = Select;
@@ -84,6 +85,10 @@ function App() {
     loadScannersList();
   }
 
+  const onWebTWAINNotFound = async () => {
+    console.log("not found");
+  }
+
   const loadScannersList = () => {
     const DWObject = dwt.current;
     if (DWObject) {
@@ -115,6 +120,7 @@ function App() {
               width="100%"
               height="100%"
               onWebTWAINReady={onWebTWAINReady}
+              onWebTWAINNotFound={onWebTWAINNotFound}
               viewMode={viewMode}
             ></DocumentViewer>
         </Content>

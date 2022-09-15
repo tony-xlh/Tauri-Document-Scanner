@@ -5,6 +5,7 @@ import { WebTwain } from "dwt/dist/types/WebTwain";
 interface props {
   license?:string;
   onWebTWAINReady?: (dwt:WebTwain) => void;
+  onWebTWAINNotFound?: () => void;
   width?: string;
   height?: string;
   viewMode?: {cols:number,rows:number};
@@ -35,11 +36,21 @@ const DocumentViewer: React.FC<props> = (props: props)  => {
         DWObject.Viewer.setViewMode(props.viewMode.cols,props.viewMode.rows);
       }
     });
+    const notfound = () => {
+      if (props.onWebTWAINNotFound){
+        props.onWebTWAINNotFound();
+      }
+    }
+    let DynamsoftAny:any = Dynamsoft;
+    DynamsoftAny.OnWebTwainNotFoundOnWindowsCallback = notfound;
+    DynamsoftAny.OnWebTwainNotFoundOnMacCallback = notfound;
+    DynamsoftAny.OnWebTwainNotFoundOnLinuxCallback = notfound;
     Dynamsoft.DWT.ResourcesPath = "/dwt-resources";
     Dynamsoft.DWT.Containers = [{
         WebTwainId: 'dwtObject',
         ContainerId: containerID
     }];
+
     Dynamsoft.DWT.Load();
   },[]);
 
