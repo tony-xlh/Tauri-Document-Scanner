@@ -17,17 +17,17 @@ const DocumentViewer: React.FC<props> = (props: props)  => {
   useEffect(()=>{
     Dynamsoft.DWT.RegisterEvent('OnWebTwainReady', () => {
       const DWObject = Dynamsoft.DWT.GetWebTwain(containerID);
+      DWObject.Viewer.width = "100%";
+      DWObject.Viewer.height = "100%";
       if (props.width) {
         if (container.current) {
           container.current.style.width = props.width;
         }
-        DWObject.Viewer.width = props.width;
       }
       if (props.height) {
         if (container.current) {
           container.current.style.height = props.height;
         }
-        DWObject.Viewer.height = props.height;
       }
       if (props.onWebTWAINReady) {
         props.onWebTWAINReady(DWObject);
